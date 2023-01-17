@@ -2,6 +2,10 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
 
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  require("dotenv").config({ path: "./config/config.env" });
+}
+
 app.use(express.json()); // middle  ware
 app.listen(3000);
 app.use(cookieParser());

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-const db_link =
-  "mongodb+srv://admin:sangam9069@cluster0.0p8zc6s.mongodb.net/?retryWrites=true&w=majority";
+const db_link = process.env.DB_URI;
 
 mongoose.set("strictQuery", true);
 

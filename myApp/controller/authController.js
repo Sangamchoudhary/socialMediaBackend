@@ -1,6 +1,6 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const jwt_key = "7f89sa7f89";
+const jwt_key = process.env.jwt_token;
 
 module.exports.protectRoute = async function protectRoute(req, res, next) {
   let token = req.cookies.login;
