@@ -43,12 +43,4 @@ const postSchema = new mongoose.Schema({
   ],
 });
 
-// postSchema.pre(/^findById/, function (next) {
-//   this.populate({
-//     path: "post",
-//     select: "_id",
-//   }).populate("post");
-//   next();
-// });
-
 module.exports = mongoose.model("Post", postSchema);

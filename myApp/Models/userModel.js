@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema({
       return emailValidator.validate(this.email);
     },
   },
-  password: { type: String, required: true, minLength: 8 },
+  password: { type: String, required: true, minLength: 6 },
   posts: [
     {
       type: mongoose.Schema.Types.ObjectId,

@@ -13,19 +13,14 @@ exports.createPost = async (req, res) => {
 
     const user = await User.findById(req.id);
 
-    let newPostInfo = {
-      "Post-ID": post._id,
-      Title: post.Title,
-      Description: post.Description,
-      "Created Time(UTC)": post.createdAt,
-    };
-
     user.posts.unshift(post.id);
     await user.save();
 
     res.status(201).json({
-      success: true,
-      post: newPostInfo,
+      "Post-ID": post._id,
+      Title: post.Title,
+      Description: post.Description,
+      "Created Time(UTC)": post.createdAt,
     });
   } catch (error) {
     res.status(500).json({
@@ -82,15 +77,10 @@ exports.getSinglePost = async (req, res) => {
         .json({ success: false, message: "Post not found" });
     }
 
-    let current_post = {
+    res.status(200).json({
       id: post._id,
       "number of likes": post.likes.length,
-      "number of comments": post.likes.length,
-    };
-
-    res.status(200).json({
-      success: true,
-      post: current_post,
+      "number of comments": post.comments.length,
     });
   } catch (error) {
     res.status(500).json({
@@ -102,16 +92,22 @@ exports.getSinglePost = async (req, res) => {
 
 exports.getAllPost = async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find({ owner: req.id });
 
-    if (!posts) {
-      return res.status(404).json({ success: false, message: "No Post found" });
-    }
+    let ans = [];
 
-    res.status(200).json({
-      success: true,
-      all_posts: posts,
+    posts.forEach((element, index, array) => {
+      ans.push({
+        id: element._id,
+        title: element.Title,
+        desc: element.Description,
+        created_at: element.createdAt,
+        comments: element.comments,
+        likes: element.likes.length,
+      });
     });
+
+    res.status(200).send(ans);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -120,7 +116,7 @@ exports.getAllPost = async (req, res) => {
   }
 };
 
-exports.likeAndUnlikePost = async (req, res) => {
+exports.likePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
@@ -131,27 +127,52 @@ exports.likeAndUnlikePost = async (req, res) => {
       });
     }
 
-    if (post.likes.includes(req.user._id)) {
-      const index = post.likes.indexOf(req.user._id);
+    if (post.likes.includes(req.id))
+      return res.json({ success: false,  message: "post is already liked" });
 
-      post.likes.splice(index, 1);
+    post.likes.push(req.id);
 
-      await post.save();
+    await post.save();
 
-      return res.status(200).json({
-        success: true,
-        message: "Post Unliked",
-      });
-    } else {
-      post.likes.push(req.user._id);
+    return res.status(200).json({
+      success: true,
+      message: "Post Liked",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-      await post.save();
+exports.unlikePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
 
-      return res.status(200).json({
-        success: true,
-        message: "Post Liked",
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
       });
     }
+
+    if (!post.likes.includes(req.id))
+      return res.json({
+        success: false,
+        message: "to unlike the post, first like it",
+      });
+
+    const index = post.likes.indexOf(req._id);
+
+    post.likes.splice(index, 1);
+
+    await post.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Post Unliked",
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -171,37 +192,16 @@ exports.commentOnPost = async (req, res) => {
       });
     }
 
-    let commentIndex = -1;
-
-    // Checking if comment already exists
-
-    post.comments.forEach((item, index) => {
-      if (item.user.toString() === req.user._id.toString()) {
-        commentIndex = index;
-      }
+    post.comments.push({
+      user: req._id,
+      comment: req.body.comment,
     });
 
-    if (commentIndex !== -1) {
-      post.comments[commentIndex].comment = req.body.comment;
+    await post.save();
 
-      await post.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Comment Updated",
-      });
-    } else {
-      post.comments.push({
-        user: req.user._id,
-        comment: req.body.comment,
-      });
-
-      await post.save();
-      return res.status(200).json({
-        success: true,
-        message: "Comment added",
-      });
-    }
+    return res.status(201).json({
+      "Comment-Id": post.comments[post.comments.length - 1]._id,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
