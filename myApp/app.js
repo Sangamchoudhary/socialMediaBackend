@@ -6,6 +6,9 @@ app.use(express.json()); // middle  ware
 app.listen(3000);
 app.use(cookieParser());
 
-// mini - app1 [user]
+
 const authenticateRouter = require("./Router/authenticateRouter");
 app.use("/api/authenticate", authenticateRouter); // base url, router-to-use
+
+const postsRouter = require("./Router/postsRouter");
+app.use("/api/posts", postsRouter); // base url, router-to-use

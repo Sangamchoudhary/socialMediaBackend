@@ -1,6 +1,17 @@
-const userModel = require("../Models/userModel");
+const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const jwt_key = "7f89sa7f89";
+
+module.exports.protectRoute = async function protectRoute(req, res, next) {
+  let token = req.cookies.login;
+  if (!token) res.json({ message: "Please Login" });
+  let payload = jwt.verify(token, jwt_key);
+  if (!payload)
+    return res.json({ message: "Login unsuccessful due to wrong token" });
+  const user = await userModel.findById(payload.payload);
+  req.id = user.id;
+  next();
+};
 
 module.exports.login = async function login(req, res) {
   try {

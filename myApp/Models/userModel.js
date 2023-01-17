@@ -25,12 +25,25 @@ const userSchema = mongoose.Schema({
     },
   },
   password: { type: String, required: true, minLength: 8 },
-  noOfFollower:{},
-  noOfFollowing:{},
-  posts:{}
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
-// model
-const userModel = mongoose.model("userModel", userSchema);
-
-module.exports = userModel;
+module.exports = mongoose.model("userModel", userSchema);
