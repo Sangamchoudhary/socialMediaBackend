@@ -25,6 +25,7 @@ app.use(express.json()); // middle  ware
 app.listen(3000);
 app.use(cookieParser());
 
+
 // for log in
 const authenticateRouter = require("./Router/authenticateRouter");
 app.use("/api/authenticate", authenticateRouter); // base url, router-to-use
@@ -48,5 +49,9 @@ app.use("/api/posts", postsRouter); // base url, router-to-use
 // for like, unlike, comment and get all post
 const postUtilityRouter = require("./Router/postUtilityRouter");
 app.use("/api", postUtilityRouter); // base url, router-to-use
+
+// for landing page
+const landingPage = require("./Router/landingPage");
+app.use("/", landingPage); // base url, router-to-use
 
 module.exports = app;
