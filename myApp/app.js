@@ -1,6 +1,21 @@
+const mongoose = require("mongoose");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
+const dotenv = require("dotenv");
+const db_link =
+  "mongodb+srv://admin:sangam9069@cluster0.0p8zc6s.mongodb.net/?retryWrites=true";
+
+mongoose.set("strictQuery", true);
+
+mongoose
+  .connect(db_link)
+  .then(function (db) {
+    console.log("Database connected");
+  })
+  .catch(function (err) {
+    console.log(err);
+  });
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({ path: "./config/config.env" });
@@ -33,3 +48,5 @@ app.use("/api/posts", postsRouter); // base url, router-to-use
 // for like, unlike, comment and get all post
 const postUtilityRouter = require("./Router/postUtilityRouter");
 app.use("/api", postUtilityRouter); // base url, router-to-use
+
+module.exports = app;

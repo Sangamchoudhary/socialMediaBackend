@@ -36,7 +36,7 @@ module.exports.follow = async function follow(req, res) {
     if (user1.following.includes(user2.id))
       return res
         .status(200)
-        .json({ success: false, message: "user is already in following list" });
+        .json({ success: true });
 
     user1.following.push(user2._id);
     user2.followers.push(user1._id);
@@ -45,7 +45,7 @@ module.exports.follow = async function follow(req, res) {
     await user2.save();
 
     return res.status(200).json({ success: true });
-  } catch (error) {
+  } catch (error) { 
     res.status(501).json({
       success: false,
       error: error.message,

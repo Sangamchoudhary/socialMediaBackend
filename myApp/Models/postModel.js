@@ -1,17 +1,4 @@
-const mongoose = require("mongoose");
-const db_link = process.env.DB_URI;
-
-mongoose.set("strictQuery", true);
-
-mongoose
-  .connect(db_link)
-  .then(function (db) {
-    console.log("Post Model DB connected");
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
-  
+const mongoose = require("mongoose");  
 
 const postSchema = new mongoose.Schema({
   owner: {

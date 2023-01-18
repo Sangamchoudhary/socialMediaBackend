@@ -1,18 +1,5 @@
 const mongoose = require("mongoose");
 const emailValidator = require("email-validator");
-const dotenv = require("dotenv");
-const db_link = process.env.DB_URI;
-
-mongoose.set("strictQuery", true);
-
-mongoose
-  .connect(db_link)
-  .then(function (db) {
-    console.log("User Model DB connected");
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
 
 const userSchema = mongoose.Schema({
   username: { type: String, required: true },
